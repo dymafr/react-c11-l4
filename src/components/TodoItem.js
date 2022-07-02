@@ -1,25 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function TodoItem({ todo, deleteTodo, updateTodo }) {
-  async function updateTodo(newTodo) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function tryUpdateTodo(newTodo) {
     try {
       setLoading(true);
       setError(null);
-      const reponse = await fetch('https://restapi.fr/api/todo', {
+      const { _id, ...update } = newTodo;
+      const reponse = await fetch(`https://restapi.fr/api/todo/${todo._id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          content: value,
-          edit: false,
-          done: false,
-        }),
+        body: JSON.stringify(update),
       });
       if (reponse.ok) {
-        const todo = await reponse.json();
-        addTodo(todo);
-        setValue('');
+        const newTodo = await reponse.json();
+        updateTodo(newTodo);
       } else {
         setError('Oops, une erreur');
       }
@@ -36,14 +35,18 @@ export default function TodoItem({ todo, deleteTodo, updateTodo }) {
         'mb-10 d-flex flex-row justify-content-center align-items-center p-10'
       }
     >
-      <span className="flex-fill">
-        {todo.content} {todo.done && '✅'}
-      </span>
+      {loading ? (
+        <span className="flex-fill">Chargement...</span>
+      ) : (
+        <span className="flex-fill">
+          {todo.content} {todo.done && '✅'}
+        </span>
+      )}
       <button
         className="btn btn-primary mr-15"
         onClick={(e) => {
           e.stopPropagation();
-          updateTodo({ ...todo, done: !todo.done });
+          tryUpdateTodo({ ...todo, done: !todo.done });
         }}
       >
         Valider
@@ -52,7 +55,7 @@ export default function TodoItem({ todo, deleteTodo, updateTodo }) {
         className="btn btn-primary mr-15"
         onClick={(e) => {
           e.stopPropagation();
-          updateTodo({ ...todo, edit: true });
+          tryUpdateTodo({ ...todo, edit: true });
         }}
       >
         Modifier
