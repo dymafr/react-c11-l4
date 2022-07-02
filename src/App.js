@@ -44,37 +44,9 @@ function App() {
     setTodoList(todoList.filter((todo) => todo._id !== id));
   }
 
-  function toggleTodo(id) {
+  function updateTodo(newTodo) {
     setTodoList(
-      todoList.map((todo) =>
-        todo._id === id ? { ...todo, done: !todo.done } : todo
-      )
-    );
-  }
-
-  function toggleTodoEdit(id) {
-    setTodoList(
-      todoList.map((todo) =>
-        todo._id === id ? { ...todo, edit: !todo.edit } : todo
-      )
-    );
-  }
-
-  function editTodo(id, content) {
-    setTodoList(
-      todoList.map((todo) =>
-        todo._id === id ? { ...todo, edit: false, content } : todo
-      )
-    );
-  }
-
-  function selectTodo(id) {
-    setTodoList(
-      todoList.map((todo) =>
-        todo._id === id
-          ? { ...todo, selected: !todo.selected }
-          : { ...todo, selected: false }
-      )
+      todoList.map((todo) => (todo._id === newTodo._id ? newTodo : todo))
     );
   }
 
@@ -89,10 +61,7 @@ function App() {
           <TodoList
             todoList={todoList}
             deleteTodo={deleteTodo}
-            toggleTodo={toggleTodo}
-            toggleTodoEdit={toggleTodoEdit}
-            editTodo={editTodo}
-            selectTodo={selectTodo}
+            updateTodo={updateTodo}
           />
         )}
       </div>

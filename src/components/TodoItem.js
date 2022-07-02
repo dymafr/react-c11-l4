@@ -1,18 +1,40 @@
 import React from 'react';
 
-export default function TodoItem({
-  todo,
-  deleteTodo,
-  toggleTodo,
-  editTodo,
-  selectTodo,
-}) {
+export default function TodoItem({ todo, deleteTodo, updateTodo }) {
+  async function updateTodo(newTodo) {
+    try {
+      setLoading(true);
+      setError(null);
+      const reponse = await fetch('https://restapi.fr/api/todo', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: value,
+          edit: false,
+          done: false,
+        }),
+      });
+      if (reponse.ok) {
+        const todo = await reponse.json();
+        addTodo(todo);
+        setValue('');
+      } else {
+        setError('Oops, une erreur');
+      }
+    } catch (e) {
+      setError('Oops, une erreur');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <li
-      onClick={selectTodo}
-      className={`mb-10 d-flex flex-row justify-content-center align-items-center p-10 ${
-        todo.selected ? 'selected' : ''
-      }  `}
+      className={
+        'mb-10 d-flex flex-row justify-content-center align-items-center p-10'
+      }
     >
       <span className="flex-fill">
         {todo.content} {todo.done && '✅'}
@@ -21,7 +43,7 @@ export default function TodoItem({
         className="btn btn-primary mr-15"
         onClick={(e) => {
           e.stopPropagation();
-          toggleTodo();
+          updateTodo({ ...todo, done: !todo.done });
         }}
       >
         Valider
@@ -30,7 +52,7 @@ export default function TodoItem({
         className="btn btn-primary mr-15"
         onClick={(e) => {
           e.stopPropagation();
-          editTodo();
+          updateTodo({ ...todo, edit: true });
         }}
       >
         Modifier
