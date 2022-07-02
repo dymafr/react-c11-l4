@@ -62,7 +62,10 @@ export default function EditTodo({ todo, updateTodo, cancelEditTodo }) {
       <button onClick={handleClick} className="btn btn-primary mr-15">
         Sauvegarder
       </button>
-      <button onClick={cancelEditTodo} className="btn btn-reverse-primary">
+      <button
+        onClick={() => tryUpdateTodo({ ...todo, edit: false })}
+        className="btn btn-reverse-primary"
+      >
         Annuler
       </button>
     </div>
